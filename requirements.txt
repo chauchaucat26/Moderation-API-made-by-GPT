@@ -3,5 +3,5 @@ uvicorn
 torch
 transformers
 fugashi
-ipadic
+unidic-lite
 protobuf
