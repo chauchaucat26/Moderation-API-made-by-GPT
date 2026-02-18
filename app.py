@@ -5,10 +5,14 @@ import time
 
 app = FastAPI()
 
-MODEL = "daigo/bert-base-japanese-hatespeech"
+# 軽量・日本語BERT
+MODEL = "cl-tohoku/bert-base-japanese"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+model = AutoModelForSequenceClassification.from_pretrained(
+    MODEL,
+    num_labels=2
+)
 
 start_time = time.time()
 total_requests = 0
@@ -24,8 +28,8 @@ def check(data: dict):
 
     inputs = tokenizer(text, return_tensors="pt", truncation=True)
     with torch.no_grad():
-        outputs = model(**inputs)
-        score = torch.softmax(outputs.logits, dim=1)[0][1].item()
+        logits = model(**inputs).logits
+        score = torch.softmax(logits, dim=1)[0][1].item()
 
     return {
         "text": text,
