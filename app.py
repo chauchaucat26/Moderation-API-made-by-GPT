@@ -1,11 +1,11 @@
+import os
+import time
+import torch
 from fastapi import FastAPI
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
-import time
 
 app = FastAPI()
 
-# 軽量・日本語BERT
 MODEL = "cl-tohoku/bert-base-japanese"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
@@ -45,3 +45,10 @@ def health():
         "totalRequests": total_requests,
         "uptime_seconds": uptime
     }
+
+# 👇 Render対応
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.environ.get("PORT", 10000))  # RenderはPORTを渡す
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
